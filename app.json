@@ -24,6 +24,8 @@
     "web": {
       "bundler": "metro",
       "output": "static",
+      "name": "Country Encyclopedia",
+      "shortName": "CE",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [

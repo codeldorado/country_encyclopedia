@@ -1,4 +1,3 @@
-// index.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Card, Text, TextInput, Avatar, Button } from 'react-native-paper';
@@ -111,7 +110,17 @@ export default function Home() {
         onEndReachedThreshold={0.5}
         refreshing={refreshing}
         onRefresh={handleRefresh}
+        contentContainerStyle={{ paddingBottom: 80 }} // To make room for the button
       />
+
+      {/* View Favorites Button */}
+      <Button
+        mode="contained"
+        style={styles.favoritesButton}
+        onPress={() => router.push('/favorites')}
+      >
+        View Favorites
+      </Button>
     </View>
   );
 }
@@ -148,5 +157,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  favoritesButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
 });
