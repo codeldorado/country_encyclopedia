@@ -15,17 +15,16 @@ export default function CountryDetails() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    // Set the initial header title to "Loading..."
+    fetchAllCountries();
+    checkFavorite();
     navigation.setOptions({ title: 'Loading...' });
 
-    // Fetch the country data based on the countryCode
     const fetchCountryDetails = async () => {
       try {
         const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
         const countryData = response.data[0];
         setCountry(countryData);
 
-        // Update the header title with the country's common name once data is loaded
         if (countryData) {
           navigation.setOptions({ title: countryData.name.common });
         }
@@ -38,25 +37,10 @@ export default function CountryDetails() {
   }, [countryCode]);
 
   useEffect(() => {
-    fetchCountryDetails();
-    fetchAllCountries();
-    checkFavorite();
-  }, [countryCode]);
-
-  useEffect(() => {
     if (country && country.borders) {
       fetchNeighborDetails();
     }
   }, [country]);
-
-  const fetchCountryDetails = async () => {
-    try {
-      const response = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`);
-      setCountry(response.data[0]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const fetchAllCountries = async () => {
     try {
@@ -116,7 +100,7 @@ export default function CountryDetails() {
     <ScrollView contentContainerStyle={styles.container}>
       <Card style={styles.card}>
         <Card.Cover 
-          source={{ uri: country.flags.png }} 
+          source={{ uri: country.flags?.png }} 
           style={styles.flag}
           resizeMode="contain"
         />
@@ -133,30 +117,38 @@ export default function CountryDetails() {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.sectionTitle}>Languages</Title>
-          <FlatList
-            data={Object.entries(country.languages)}
-            keyExtractor={([code]) => code}
-            renderItem={({ item: [code, language] }) => (
-              <TouchableOpacity onPress={() => openWikipediaLink(language)}>
-                <Text style={styles.link}>{language}</Text>
-              </TouchableOpacity>
-            )}
-          />
+          {country.languages && Object.keys(country.languages).length > 0 ? (
+            <FlatList
+              data={Object.entries(country.languages)}
+              keyExtractor={([code]) => code}
+              renderItem={({ item: [code, language] }) => (
+                <TouchableOpacity onPress={() => openWikipediaLink(language)}>
+                  <Text style={styles.link}>{language}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          ) : (
+            <Paragraph>No languages available</Paragraph>
+          )}
         </Card.Content>
       </Card>
 
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.sectionTitle}>Neighboring Countries</Title>
-          <FlatList
-            data={neighbors}
-            keyExtractor={(neighbor) => neighbor.cca3}
-            renderItem={({ item: neighbor }) => (
-              <TouchableOpacity onPress={() => router.push(`/country/${neighbor.cca3}`)}>
-                <Text style={styles.link}>{neighbor.name.common}</Text>
-              </TouchableOpacity>
-            )}
-          />
+          {neighbors && neighbors.length > 0 ? (
+            <FlatList
+              data={neighbors}
+              keyExtractor={(neighbor) => neighbor.cca3}
+              renderItem={({ item: neighbor }) => (
+                <TouchableOpacity onPress={() => router.push(`/country/${neighbor.cca3}`)}>
+                  <Text style={styles.link}>{neighbor.name.common}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          ) : (
+            <Paragraph>No neighboring countries</Paragraph>
+          )}
         </Card.Content>
       </Card>
 
