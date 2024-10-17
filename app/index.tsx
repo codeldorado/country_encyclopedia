@@ -1,24 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+// index.tsx
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Card, Text, TextInput, Avatar, Button } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter, useNavigation  } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
+
+const ITEMS_PER_PAGE = 20;
 
 export default function Home() {
   const [countries, setCountries] = useState([]);
+  const [displayedCountries, setDisplayedCountries] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [favorites, setFavorites] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
   const navigation = useNavigation();
 
   useEffect(() => {
-    fetchCountries();
-    loadFavorites();
-    navigation.setOptions({
-      title: 'Country Encyclopedia',
-    });
+    loadCachedCountries();
+    navigation.setOptions({ title: 'Country Encyclopedia' });
   }, []);
+
+  useEffect(() => {
+    paginateCountries();
+  }, [countries, searchTerm, currentPage]);
+
+  const loadCachedCountries = async () => {
+    const cachedData = await AsyncStorage.getItem('countriesData');
+    if (cachedData) {
+      setCountries(JSON.parse(cachedData));
+      setLoading(false);
+    } else {
+      fetchCountries();
+    }
+  };
 
   const fetchCountries = async () => {
     try {
@@ -27,22 +44,40 @@ export default function Home() {
         a.name.common.localeCompare(b.name.common)
       );
       setCountries(sortedCountries);
+      await AsyncStorage.setItem('countriesData', JSON.stringify(sortedCountries));
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const loadFavorites = async () => {
-    const storedFavorites = await AsyncStorage.getItem('favorites');
-    if (storedFavorites) setFavorites(JSON.parse(storedFavorites));
+  const paginateCountries = () => {
+    const filtered = countries.filter(country =>
+      country.name.common.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      Object.values(country.translations || {}).some(t => 
+        t.common.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    setDisplayedCountries(filtered.slice(0, endIndex));
   };
 
-  const filteredCountries = countries.filter(country =>
-    country.name.common.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    Object.values(country.translations || {}).some(t => 
-      t.common.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  const loadMore = () => {
+    if (displayedCountries.length < countries.length) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchCountries().finally(() => setRefreshing(false));
+  };
+
+  if (loading) {
+    return <ActivityIndicator style={styles.loading} size="large" color="#0000ff" />;
+  }
 
   return (
     <View style={styles.container}>
@@ -50,11 +85,14 @@ export default function Home() {
         mode="outlined"
         label="Search country..."
         value={searchTerm}
-        onChangeText={setSearchTerm}
+        onChangeText={text => {
+          setSearchTerm(text);
+          setCurrentPage(1); // Reset to page 1 when search term changes
+        }}
         style={styles.searchInput}
       />
       <FlatList
-        data={filteredCountries}
+        data={displayedCountries}
         keyExtractor={(item) => item.cca3}
         renderItem={({ item }) => (
           <Card style={styles.card} onPress={() => router.push(`/country/${item.cca3}`)}>
@@ -67,15 +105,13 @@ export default function Home() {
             </Card.Content>
           </Card>
         )}
-        style={styles.countryList}
+        initialNumToRender={10}
+        windowSize={5}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
       />
-      <Button
-        mode="contained"
-        style={styles.favoritesButton}
-        onPress={() => router.push('/favorites')}
-      >
-        View Favorites
-      </Button>
     </View>
   );
 }
@@ -88,10 +124,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     marginBottom: 20,
-  },
-  countryList: {
-    flex: 1,
-    marginBottom: 60, // Ensures the list doesn’t overlap with the button
   },
   card: {
     marginBottom: 15,
@@ -112,10 +144,9 @@ const styles = StyleSheet.create({
   region: {
     color: '#777',
   },
-  favoritesButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
