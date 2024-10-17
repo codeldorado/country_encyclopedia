@@ -35,7 +35,7 @@ The app checks AsyncStorage on load to initialize the list of favorite countries
 
 ## Installation and running
 
-Make sure that you've installed node (>18.13.0) and npm is installed on your machine.
+Make sure that you have node (>18.13.0) and npm installed on your machine.
 
 1. Clone the repositroy
 
