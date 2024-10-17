@@ -35,13 +35,21 @@ The app checks AsyncStorage on load to initialize the list of favorite countries
 
 ## Installation and running
 
-1. Install dependencies
+Make sure that you've installed node (>18.13.0) and npm is installed on your machine.
+
+1. Clone the repositroy
+
+   ```bash
+   git clone https://github.com/codeldorado/country_encyclopedia.git
+   ```
+
+2. Install dependencies
 
    ```bash
    npm install
    ```
 
-2. Start the app
+3. Start the app
 
    ```bash
    npm run start
