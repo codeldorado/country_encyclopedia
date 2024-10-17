@@ -30,8 +30,6 @@ The country details page provides in-depth information about each selected count
 - The country’s flag is displayed as an image. The flag URL is provided by the flags.png field from the API.
 - To determine the country’s rank, the app sorts all countries by population. It then finds the index of the selected country within this sorted list.
 This rank is recalculated on each detail view to ensure accuracy as data may change.
-- To determine the country’s rank, the app sorts all countries by population. It then finds the index of the selected country within this sorted list.
-This rank is recalculated on each detail view to ensure accuracy as data may change.
 - The favorite/unfavorite functionality is implemented using a clickable icon. When clicked, the country is added to or removed from the list of favorites.<br>**Storage**: The list of favorites is managed through AsyncStorage, ensuring that favorites persist across app sessions.<br>
 The app checks AsyncStorage on load to initialize the list of favorite countries, updating this list dynamically as users mark/unmark countries.
 
