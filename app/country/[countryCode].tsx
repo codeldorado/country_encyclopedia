@@ -17,7 +17,14 @@ export default function CountryDetails() {
   useEffect(() => {
     fetchAllCountries();
     checkFavorite();
-    navigation.setOptions({ title: 'Loading...' });
+    navigation.setOptions({
+      title: 'Loading...',
+      headerRight: () => (
+        <Button mode="contained" onPress={() => router.push('/')} style={styles.headerButton}>
+          Go to Home
+        </Button>
+      ),
+    });
 
     const fetchCountryDetails = async () => {
       try {
@@ -168,6 +175,10 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#f5f5f5',
+  },
+  headerButton: {
+    marginRight: 10,
+    borderRadius: 20,
   },
   card: {
     marginBottom: 15,

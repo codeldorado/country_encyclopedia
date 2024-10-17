@@ -110,7 +110,7 @@ export default function Home() {
         onEndReachedThreshold={0.5}
         refreshing={refreshing}
         onRefresh={handleRefresh}
-        contentContainerStyle={{ paddingBottom: 80 }} // To make room for the button
+        contentContainerStyle={{ paddingBottom: 80 }}
       />
 
       {/* View Favorites Button */}

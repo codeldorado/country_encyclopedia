@@ -2,17 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card, Text, Avatar, Button } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 import axios from 'axios';
 
 export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
   const router = useRouter();
+  const navigation = useNavigation();
 
   useEffect(() => {
+    navigation.setOptions({
+      title: 'Favorite Countries',
+      headerRight: () => (
+        <Button mode="contained" onPress={() => router.push('/')} style={styles.headerButton}>
+          Go to Home
+        </Button>
+      ),
+    });
     loadFavoriteCountries();
   }, []);
-
+  
   const loadFavoriteCountries = async () => {
     try {
       const storedFavorites = await AsyncStorage.getItem('favorites');
@@ -62,6 +71,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#f5f5f5',
+  },
+  headerButton: {
+    marginRight: 10,
+    borderRadius: 20,
   },
   title: {
     fontSize: 24,
