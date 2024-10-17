@@ -4,7 +4,6 @@ import { Card, Text, TextInput, Avatar, Button } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useNavigation  } from 'expo-router';
-import Constants from 'expo-constants';
 
 export default function Home() {
   const [countries, setCountries] = useState([]);
@@ -17,7 +16,7 @@ export default function Home() {
     fetchCountries();
     loadFavorites();
     navigation.setOptions({
-      title: 'Country Encyclopedia', // Change "Home Page" to whatever you'd like
+      title: 'Country Encyclopedia',
     });
   }, []);
 
