@@ -9,6 +9,7 @@ Country Encyclopedia is a mobile and web application built with React Native and
 - **Favorites Management**: Mark and unmark countries as favorites, stored locally for quick access.
 - **Caching**: Data is cached locally to reduce API calls and improve load times.
 - **Pagination**: Infinite scrolling and lazy loading for a smoother user experience.
+- **Styling**: React Native Paper is used for styling.
 
 ## Implementation Details
 
@@ -45,7 +46,7 @@ The app checks AsyncStorage on load to initialize the list of favorite countries
 2. Start the app
 
    ```bash
-    npm run start
+   npm run start
    ```
 
 Then, you'll see the project runnig on [https://localhost:8081](https://localhost:8081)
