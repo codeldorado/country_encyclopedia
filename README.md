@@ -1,8 +1,40 @@
-# Welcome to your Expo app 👋
+# Welcome to Country Encyclopedia App 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Country Encyclopedia is a mobile and web application built with React Native and Expo. This app allows users to explore detailed information about various countries, including population, area, languages, and neighboring countries. Users can also mark countries as favorites for quick access.
 
-## Get started
+## Features
+
+- **Country Details**: Browse a comprehensive list of countries and view details like population, area, and neighboring countries.
+- **Search Functionality**: Search for countries by name or translations in various languages.
+- **Favorites Management**: Mark and unmark countries as favorites, stored locally for quick access.
+- **Caching**: Data is cached locally to reduce API calls and improve load times.
+- **Pagination**: Infinite scrolling and lazy loading for a smoother user experience.
+
+## Implementation Details
+
+- **API Used**: [REST Countries API](https://restcountries.com/v3.1/all)
+- **Implementation**
+   - The app uses Axios to fetch data from the REST Countries API. On initial load, a GET request retrieves data for all countries and stores it locally in the app’s state.
+   - **Caching**: The data is cached using AsyncStorage so that subsequent app loads can fetch data from local storage, reducing API calls and enhancing performance.
+
+### Home Page
+- **Lazy Loading and Virtualized Lists**: The home page list of countries is virtualized with FlatList for efficient scrolling and rendering.
+- **Pagination and Infinite Scroll**: Data is loaded in chunks as the user scrolls to improve performance.
+- The search input field filters countries by name or by available translations. This allows users to find countries based on various language translations (e.g., “Läti” for Latvia).
+- The amount of data is small enough, so the debouncing is not implemented yet. 
+
+### Country Details Page
+The country details page provides in-depth information about each selected country.
+- It shows each country's common name, official name, country Code, population, area and list of languages fetched from the related fields of the response.
+- The country’s flag is displayed as an image. The flag URL is provided by the flags.png field from the API.
+- To determine the country’s rank, the app sorts all countries by population. It then finds the index of the selected country within this sorted list.
+This rank is recalculated on each detail view to ensure accuracy as data may change.
+- To determine the country’s rank, the app sorts all countries by population. It then finds the index of the selected country within this sorted list.
+This rank is recalculated on each detail view to ensure accuracy as data may change.
+- The favorite/unfavorite functionality is implemented using a clickable icon. When clicked, the country is added to or removed from the list of favorites.<br>**Storage**: The list of favorites is managed through AsyncStorage, ensuring that favorites persist across app sessions.<br>
+The app checks AsyncStorage on load to initialize the list of favorite countries, updating this list dynamically as users mark/unmark countries.
+
+## Installation and running
 
 1. Install dependencies
 
@@ -13,38 +45,9 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 2. Start the app
 
    ```bash
-    npx expo start
+    npm run start
    ```
 
-In the output, you'll find options to open the app in a
+Then, you'll see the project runnig on [https://localhost:8081](https://localhost:8081)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Leave a comment here for some enhancement, thanks!
